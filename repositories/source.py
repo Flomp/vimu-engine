@@ -12,6 +12,7 @@ class SourceCorpusRepository(Repository):
             for key in node.outputs.keys():
                 output_data[key] = output
 
+
 class SourceTinynotationRepository(Repository):
     def process(self, node: EngineNode, input_data: WorkerInputs, output_data: WorkerOutputs):
         tinynotation = node.data.get('data')

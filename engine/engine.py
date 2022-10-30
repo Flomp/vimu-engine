@@ -1,5 +1,7 @@
 from models.engine import Data, EngineNode, InputConnectionData, WorkerOutputs, WorkerInputs
 from repositories.analysis import AnalysisKeyRepository, AnalysisRomanNumeralRepository
+from repositories.detect import DetectModulationRepository, DetectParallelsRepository, DetectVoiceCrossingsRepository
+from repositories.figured_bass import FiguredBassRealizeRepository
 from repositories.output import OutputRepository
 from repositories.search import SearchPartRepository, SearchLyricsRepository
 from repositories.select import SelectMeasuresRepository, SelectPartRepository, SelectNotesRepository
@@ -36,6 +38,14 @@ def get_repo(node_name: str):
         return SearchPartRepository()
     elif node_name == "search_lyrics":
         return SearchLyricsRepository()
+    elif node_name == "figured_bass_realize":
+        return FiguredBassRealizeRepository()
+    elif node_name == "detect_modulation":
+        return DetectModulationRepository()
+    elif node_name == "detect_parallels":
+        return DetectParallelsRepository()
+    elif node_name == "detect_voice_crossings":
+        return DetectVoiceCrossingsRepository()
     return None
 
 
