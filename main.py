@@ -1,3 +1,6 @@
+import os
+import uvicorn
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -24,3 +27,6 @@ async def root(data: Data):
     data = engine.process(data)
 
     return APIResponse("success", data, None)
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=os.getenv("PORT", default=5000), log_level="info")
