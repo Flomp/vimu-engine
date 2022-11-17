@@ -1,15 +1,21 @@
+import io
 import os
+
+import music21.converter
 import uvicorn
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import StreamingResponse
 
-from engine.engine import Engine
+from engine import Engine
 from models.api import APIResponse
 from models.engine import Data
+from musicxml import MusicXML
 
 app = FastAPI()
 engine = Engine()
+musicxml = MusicXML()
 
 origins = ["*"]
 
@@ -22,11 +28,27 @@ app.add_middleware(
 )
 
 
-@app.post("/", response_model=APIResponse)
+@app.post("/engine", response_model=APIResponse)
 async def root(data: Data):
     data = engine.process(data)
 
     return APIResponse("success", data, None)
+
+
+@app.post("/musicxml/meta")
+async def musicxml_meta(file: UploadFile):
+    try:
+        meta = musicxml.meta(file.file.read())
+    except music21.converter.ConverterException:
+        raise HTTPException(status_code=400, detail="Bad request")
+    return APIResponse("success", meta, None)
+
+
+@app.post("/musicxml/thumbnail")
+async def musicxml_thumbnail(file: UploadFile):
+    thumbnail = musicxml.thumbnail(file.file.read())
+    return StreamingResponse(io.BytesIO(thumbnail), media_type="image/svg+xml")
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=os.getenv("PORT", default=5000), log_level="info")
