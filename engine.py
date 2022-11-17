@@ -5,13 +5,15 @@ from repositories.figured_bass import FiguredBassRealizeRepository
 from repositories.output import OutputRepository
 from repositories.search import SearchPartRepository, SearchLyricsRepository
 from repositories.select import SelectMeasuresRepository, SelectPartRepository, SelectNotesRepository
-from repositories.source import SourceCorpusRepository, SourceTinynotationRepository
+from repositories.source import SourceCorpusRepository, SourceTinynotationRepository, SourceScoreRepository
 from repositories.transform import TransformTransposeRepository, TransformChordifyRepository, TransformFlattenRepository
 
 
 def get_repo(node_name: str):
     if node_name == "output":
         return OutputRepository()
+    elif node_name == "source_score":
+        return SourceScoreRepository()
     elif node_name == "source_corpus":
         return SourceCorpusRepository()
     elif node_name == "source_tinynotation":
