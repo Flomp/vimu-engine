@@ -1,4 +1,4 @@
-from music21 import stream, key as m21_key, roman
+from music21 import stream, key as m21_key, roman, interval, note
 
 from models.engine import EngineNode, WorkerInputs, WorkerOutputs
 from repositories.repository import Repository
@@ -21,7 +21,15 @@ class AnalysisAmbitusRepository(Repository):
         in_0: stream = input_data.get('in_0')
 
         if in_0 is not None:
-            output = in_0.analyze('ambitus')
+            output = stream.Score()
+            itv: interval.Interval = in_0.analyze('ambitus')
+            lower_note = note.Note(itv.pitchStart)
+            upper_note = note.Note(itv.pitchEnd)
+
+            lower_note.insertLyric(lower_note.nameWithOctave)
+            upper_note.insertLyric(upper_note.nameWithOctave)
+            output.append(lower_note)
+            output.append(upper_note)
             for key in node.outputs.keys():
                 output_data[key] = output
 

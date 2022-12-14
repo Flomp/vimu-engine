@@ -1,5 +1,5 @@
 from models.engine import Data, EngineNode, InputConnectionData, WorkerOutputs, WorkerInputs
-from repositories.analysis import AnalysisKeyRepository, AnalysisRomanNumeralRepository
+from repositories.analysis import AnalysisKeyRepository, AnalysisRomanNumeralRepository, AnalysisAmbitusRepository
 from repositories.detect import DetectModulationRepository, DetectParallelsRepository, DetectVoiceCrossingsRepository
 from repositories.figured_bass import FiguredBassRealizeRepository
 from repositories.output import OutputRepository
@@ -33,7 +33,7 @@ def get_repo(node_name: str):
     elif node_name == "analysis_key":
         return AnalysisKeyRepository()
     elif node_name == "analysis_ambitus":
-        return AnalysisKeyRepository()
+        return AnalysisAmbitusRepository()
     elif node_name == "analysis_roman_numeral":
         return AnalysisRomanNumeralRepository()
     elif node_name == "search_part":
