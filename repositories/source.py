@@ -1,7 +1,7 @@
 import os
 
 import requests
-from music21 import corpus, converter
+from music21 import corpus, converter, tinyNotation, chord
 
 from models.engine import EngineNode, WorkerInputs, WorkerOutputs
 from repositories.repository import Repository
@@ -30,9 +30,24 @@ class SourceScoreRepository(Repository):
 
 
 class SourceTinynotationRepository(Repository):
+
     def process(self, node: EngineNode, input_data: WorkerInputs, output_data: WorkerOutputs):
+
+        class ChordState(tinyNotation.State):
+            def affectTokenAfterParse(self, n):
+                super(ChordState, self).affectTokenAfterParse(n)
+                return None  # do not append Note object
+
+            def end(self):
+                ch = chord.Chord(self.affectedTokens)
+                ch.duration = self.affectedTokens[0].duration
+                return ch
+
         tinynotation = node.data.get('data')
         if tinynotation is not None:
-            data = converter.parse('tinynotation:' + tinynotation)
+            tnc = tinyNotation.Converter()
+            tnc.load(tinynotation)
+            tnc.bracketStateMapping['chord'] = ChordState
+            data = tnc.parse().stream
             for key in node.outputs.keys():
                 output_data[key] = data

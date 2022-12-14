@@ -4,7 +4,7 @@ from repositories.detect import DetectModulationRepository, DetectParallelsRepos
 from repositories.figured_bass import FiguredBassRealizeRepository
 from repositories.output import OutputRepository
 from repositories.search import SearchPartRepository, SearchLyricsRepository
-from repositories.select import SelectMeasuresRepository, SelectPartRepository, SelectNotesRepository
+from repositories.select import SelectMeasuresRepository, SelectPartsRepository, SelectNotesRepository
 from repositories.source import SourceCorpusRepository, SourceTinynotationRepository, SourceScoreRepository
 from repositories.transform import TransformTransposeRepository, TransformChordifyRepository, TransformFlattenRepository
 
@@ -20,8 +20,8 @@ def get_repo(node_name: str):
         return SourceTinynotationRepository()
     elif node_name == "select_measures":
         return SelectMeasuresRepository()
-    elif node_name == "select_part":
-        return SelectPartRepository()
+    elif node_name == "select_parts":
+        return SelectPartsRepository()
     elif node_name == "select_notes":
         return SelectNotesRepository()
     elif node_name == "transform_transpose":

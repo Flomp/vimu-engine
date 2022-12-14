@@ -1,7 +1,7 @@
 import pickle
 
 import numpy as np
-from music21 import analysis, corpus, stream
+from music21 import analysis, corpus, stream, note
 from music21.figuredBass import checker
 
 from models.engine import EngineNode, WorkerInputs, WorkerOutputs
@@ -21,7 +21,10 @@ class DetectModulationRepository(Repository):
         c = wa.getMinimumWindowStream()
         slices = []
         for ev in c.flat.notes:
-            slices.append(ev.pitch.pitchClass)
+            if type(ev) == note.Note:
+                slices.append(ev.pitch.pitchClass)
+            else:
+                print(ev)
 
         return np.array(slices).reshape(1, -1), c
 

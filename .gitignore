@@ -88,3 +88,5 @@ db.sqlite3
 
 ### PyCharm ###
 .idea
+
+./seed.py

@@ -21,7 +21,7 @@ class MusicXML:
         if s is None:
             return {}
         instruments = " ".join([(part.partName if part.partName is not None else "") for part in s.recurse().parts])
-        keys = " ".join({key.tonicPitchNameWithCase for key in s.recurse().getElementsByClass('KeySignature')})
+        keys = " ".join({getattr(key, "tonicPitchNameWithCase", "") for key in s.recurse().getElementsByClass('KeySignature')})
         language = self.ld.mostLikelyLanguage(music21.text.assembleLyrics(s))
         times = " ".join({time.ratioString for time in s.recurse().getElementsByClass('TimeSignature')})
         return {
