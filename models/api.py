@@ -7,4 +7,4 @@ from pydantic.dataclasses import dataclass
 class APIResponse:
     status: str
     data: Any | None
-    error: str | None
+    error: Any | None

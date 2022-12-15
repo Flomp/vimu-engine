@@ -51,6 +51,13 @@ def get_repo(node_name: str):
     return None
 
 
+class EngineException(Exception):
+    def __init__(self, message, node: EngineNode):
+        super().__init__(message)
+
+        self.node = node
+
+
 class Engine:
     data: Data
     forwarded = set()
@@ -117,7 +124,10 @@ class Engine:
         output_data = WorkerOutputs()
 
         if repo is not None:
-            repo.process(node, input_data, output_data)
+            try:
+                repo.process(node, input_data, output_data)
+            except Exception as e:
+                raise EngineException(str(e), node)
 
         return output_data
 

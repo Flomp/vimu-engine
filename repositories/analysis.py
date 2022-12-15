@@ -37,10 +37,11 @@ class AnalysisAmbitusRepository(Repository):
 class AnalysisRomanNumeralRepository(Repository):
 
     def process(self, node: EngineNode, input_data: WorkerInputs, output_data: WorkerOutputs):
-        in_0: m21_key = input_data.get('in_0')
         in_1: stream = input_data.get('in_1')
+        key = node.data.get('data')
 
-        if in_0 is not None and in_1 is not None:
+        if in_1 is not None:
+            key = in_1.analyze('key') if key is None else key
             output = in_1.chordify()
             if type(in_1) is stream.Score:
                 last_part = in_1.parts[-1]
@@ -48,7 +49,7 @@ class AnalysisRomanNumeralRepository(Repository):
                 last_part = in_1
 
             for c in output.flatten().getElementsByClass('Chord'):
-                rn = roman.romanNumeralFromChord(c, in_0)
+                rn = roman.romanNumeralFromChord(c, key)
                 for n in last_part.flatten().getElementsByOffset(c.offset):
                     try:
                         n.addLyric(str(rn.figure))

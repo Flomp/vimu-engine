@@ -1,4 +1,5 @@
 import io
+import json
 import os
 
 import music21.converter
@@ -8,7 +9,7 @@ from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import StreamingResponse
 
-from engine import Engine
+from engine import Engine, EngineException
 from models.api import APIResponse
 from models.engine import Data
 from musicxml import MusicXML
@@ -30,9 +31,12 @@ app.add_middleware(
 
 @app.post("/engine", response_model=APIResponse)
 async def root(data: Data):
-    data = engine.process(data)
+    try:
+        data = engine.process(data)
+        return APIResponse("success", data, None)
+    except EngineException as e:
 
-    return APIResponse("success", data, None)
+        return APIResponse("error", None, {"message": str(e), "node": e.node})
 
 
 @app.post("/musicxml/meta")

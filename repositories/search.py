@@ -72,11 +72,12 @@ class SearchLyricsRepository(Repository):
 
         color = node.data.get('color')
 
-        if None not in (in_0, lyrics, color):
-            ls = m21_search.lyrics.LyricSearcher(in_0)
-            matches = ls.search(lyrics)
-            for m in matches:
-                for el in m.els:
-                    el.style.color = color
+        if None not in (in_0, color):
+            if lyrics is not None:
+                ls = m21_search.lyrics.LyricSearcher(in_0)
+                matches = ls.search(lyrics)
+                for m in matches:
+                    for el in m.els:
+                        el.style.color = color
             for key in node.outputs.keys():
                 output_data[key] = in_0

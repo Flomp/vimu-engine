@@ -1,7 +1,7 @@
 import pickle
 
 import numpy as np
-from music21 import analysis, corpus, stream, note
+from music21 import analysis, corpus, stream, note, chord
 from music21.figuredBass import checker
 
 from models.engine import EngineNode, WorkerInputs, WorkerOutputs
@@ -23,6 +23,8 @@ class DetectModulationRepository(Repository):
         for ev in c.flat.notes:
             if type(ev) == note.Note:
                 slices.append(ev.pitch.pitchClass)
+            elif type(ev) == chord.Chord:
+                slices.append(ev.root().pitchClass)
             else:
                 print(ev)
 
@@ -39,7 +41,12 @@ class DetectModulationRepository(Repository):
             pred = model.predict(v)
 
             idx = 0
-            last_part = in_0.parts[-1].flatten()
+            if hasattr(in_0, "parts"):
+                last_part = in_0.parts[-1]
+            else:
+                last_part = in_0
+
+            last_part = last_part.flatten()
             previous_key = ""
             for i, m in enumerate(c.getElementsByClass('Measure')):
                 window_size = len(m.notes)

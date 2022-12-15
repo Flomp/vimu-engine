@@ -1,4 +1,5 @@
-from music21 import stream
+from music21 import stream, note
+from music21.stream import Measure
 
 from models.engine import EngineNode, WorkerInputs, WorkerOutputs
 from repositories.repository import Repository
