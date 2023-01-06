@@ -18,7 +18,7 @@ app = FastAPI()
 engine = Engine()
 musicxml = MusicXML()
 
-origins = [os.getenv("APP_URL", "https://vimu.app")]
+origins = [os.getenv("APP_URL", "https://vimu.app"), 'http://localhost:3000']
 
 app.add_middleware(
     CORSMiddleware,

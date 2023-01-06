@@ -3,6 +3,8 @@ from repositories.analysis import AnalysisKeyRepository, AnalysisRomanNumeralRep
 from repositories.detect import DetectModulationRepository, DetectParallelsRepository, DetectVoiceCrossingsRepository
 from repositories.figured_bass import FiguredBassRealizeRepository
 from repositories.output import OutputRepository
+from repositories.plot import PlotHistogramRepository, PlotBarRepository, PlotScatterRepository, \
+    PlotScatterWeightedRepository, PlotBarWeightedRepository
 from repositories.search import SearchPartRepository, SearchLyricsRepository
 from repositories.select import SelectMeasuresRepository, SelectPartsRepository, SelectNotesRepository
 from repositories.source import SourceCorpusRepository, SourceTinynotationRepository, SourceScoreRepository
@@ -48,6 +50,16 @@ def get_repo(node_name: str):
         return DetectParallelsRepository()
     elif node_name == "detect_voice_crossings":
         return DetectVoiceCrossingsRepository()
+    elif node_name == "plot_histogram":
+        return PlotHistogramRepository()
+    elif node_name == "plot_bar":
+        return PlotBarRepository()
+    elif node_name == "plot_bar_weighted":
+        return PlotBarWeightedRepository()
+    elif node_name == "plot_scatter":
+        return PlotScatterRepository()
+    elif node_name == "plot_scatter_weighted":
+        return PlotScatterWeightedRepository()
     return None
 
 
@@ -61,10 +73,12 @@ class EngineException(Exception):
 class Engine:
     data: Data
     forwarded = set()
+    plots = set()
 
     def process(self, data: Data):
         self.data = data
         self.forwarded.clear()
+        self.plots.clear()
 
         self.process_start_node()
         self.process_unreachable()
@@ -74,7 +88,7 @@ class Engine:
         if output_node is None:
             raise Exception('No output node found!')
 
-        return output_node.data.get('output')
+        return {'output': output_node.data.get('output'), 'plots': self.plots}
 
     def process_start_node(self, start_id: int = None):
 
@@ -105,6 +119,9 @@ class Engine:
 
         if node.outputData is None:
             node.outputData = self.process_worker(node)
+
+        if 'plot' in node.outputData.keys():
+            self.plots.add(node.outputData['plot'])
 
         return node.outputData
 
