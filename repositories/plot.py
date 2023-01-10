@@ -31,12 +31,12 @@ class PlotRepository(Repository):
 class PlotBarRepository(PlotRepository):
 
     def plot(self, in_0, x_axis, y_axis):
-        return in_0.plot('bar', x_axis, y_axis, doneAction=None)
+        return in_0.plot('bar', doneAction=None)
 
 
 class PlotBarWeightedRepository(PlotRepository):
     def plot(self, in_0, x_axis, y_axis):
-        return in_0.plot('barweighted', x_axis, y_axis, doneAction=None)
+        return in_0.plot('barweighted', doneAction=None)
 
 
 class PlotHistogramRepository(PlotRepository):

@@ -52,9 +52,9 @@ def get_repo(node_name: str):
         return DetectVoiceCrossingsRepository()
     elif node_name == "plot_histogram":
         return PlotHistogramRepository()
-    elif node_name == "plot_bar":
+    elif node_name == "plot_piano_roll":
         return PlotBarRepository()
-    elif node_name == "plot_bar_weighted":
+    elif node_name == "plot_dynamics":
         return PlotBarWeightedRepository()
     elif node_name == "plot_scatter":
         return PlotScatterRepository()
