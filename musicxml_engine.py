@@ -3,7 +3,7 @@ from music21 import converter
 import verovio
 
 
-class MusicXML:
+class MusicXMLEngine:
     s: music21.stream
 
     def __init__(self):
@@ -21,7 +21,8 @@ class MusicXML:
         if s is None:
             return {}
         instruments = " ".join([(part.partName if part.partName is not None else "") for part in s.recurse().parts])
-        keys = " ".join({getattr(key, "tonicPitchNameWithCase", "") for key in s.recurse().getElementsByClass('KeySignature')})
+        keys = " ".join(
+            {getattr(key, "tonicPitchNameWithCase", "") for key in s.recurse().getElementsByClass('KeySignature')})
         language = self.ld.mostLikelyLanguage(music21.text.assembleLyrics(s))
         times = " ".join({time.ratioString for time in s.recurse().getElementsByClass('TimeSignature')})
         return {
@@ -30,5 +31,6 @@ class MusicXML:
             "instruments": instruments,
             "keys": keys,
             "language": language,
-            "times": times
+            "times": times,
+            "lyrics": music21.text.assembleLyrics(s)
         }

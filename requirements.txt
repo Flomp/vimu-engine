@@ -49,3 +49,5 @@ watchfiles==0.18.0
 webcolors==1.12
 webencodings==0.5.1
 websockets==10.3
+
+stripe~=5.0.0

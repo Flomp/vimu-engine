@@ -1,24 +1,19 @@
-import io
-import json
 import os
 
-import music21.converter
 import uvicorn
-
-from fastapi import FastAPI, UploadFile, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import StreamingResponse
 
+from config import settings
 from engine import Engine, EngineException
 from models.api import APIResponse
 from models.engine import Data
-from musicxml import MusicXML
+from routers import stripe_router, musicxml_router
 
 app = FastAPI()
 engine = Engine()
-musicxml = MusicXML()
 
-origins = [os.getenv("APP_URL", "https://vimu.app"), 'http://localhost:3000']
+origins = [settings.app_url]
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,6 +22,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(stripe_router.router)
+app.include_router(musicxml_router.router)
 
 
 @app.post("/engine", response_model=APIResponse)
@@ -37,21 +35,6 @@ async def root(data: Data):
     except EngineException as e:
 
         return APIResponse("error", None, {"message": str(e), "node": e.node})
-
-
-@app.post("/musicxml/meta")
-async def musicxml_meta(file: UploadFile):
-    try:
-        meta = musicxml.meta(file.file.read())
-    except music21.converter.ConverterException:
-        raise HTTPException(status_code=400, detail="Bad request")
-    return APIResponse("success", meta, None)
-
-
-@app.post("/musicxml/thumbnail")
-async def musicxml_thumbnail(file: UploadFile):
-    thumbnail = musicxml.thumbnail(file.file.read())
-    return StreamingResponse(io.BytesIO(thumbnail), media_type="image/svg+xml")
 
 
 if __name__ == "__main__":
