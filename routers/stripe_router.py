@@ -35,7 +35,7 @@ async def stripe_create_session(session_request: StripeSessionRequest):
 
 @router.post('/stripe/webhook')
 async def stripe_webhook_received(request: Request):
-    webhook_secret = 'whsec_9c4d7e6c81a614a78778ad4975a24bf8baa65e3d6eae2af0101ee3e8528b6adf'
+    webhook_secret = settings.stripe_webhook_secret
     raw_request_data = await request.body()
     signature = request.headers.get('stripe-signature')
     try:
