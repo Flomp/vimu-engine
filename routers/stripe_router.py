@@ -4,7 +4,6 @@ from fastapi import APIRouter, Request
 from config import settings
 from models.api import APIResponse
 from models.stripe import StripeSessionRequest
-from models.vimu import VimuSubscription
 from pocketbase.pocketbase import Pocketbase
 
 router = APIRouter()
@@ -50,35 +49,43 @@ async def stripe_webhook_received(request: Request):
 
     if event_type == 'checkout.session.completed':
         user_id = data_object['client_reference_id']
-        stripe_subscription_id = data_object['subscription']
         stripe_customer_id = data_object['customer']
-        status = data_object['status']
+        stripe_subscription_id = data_object['subscription']
 
-        subscription = VimuSubscription(stripe_customer_id, stripe_subscription_id, status, user_id)
-        pb.create_subscription(subscription)
+        subscription = {'stripe_subscription_id': stripe_subscription_id, 'stripe_customer_id': stripe_customer_id,
+                        'user': user_id, 'status': 'active'}
 
+        pb.create('subscriptions', subscription)
     elif event_type == 'invoice.paid':
         stripe_subscription_id = data_object['subscription']
+        subscription = pb.get_first_where('subscriptions', f"stripe_subscription_id='{stripe_subscription_id}'")
 
-        subscription = pb.get_subscription(stripe_subscription_id)
         if subscription is not None:
-            subscription.status = data_object['status']
-            pb.update_subscription(subscription)
+            subscription['status'] = 'active'
+            pb.update('subscriptions', subscription)
 
     elif event_type == 'invoice.payment_failed':
         stripe_subscription_id = data_object['subscription']
+        subscription = pb.get_first_where('subscriptions', f"stripe_subscription_id='{stripe_subscription_id}'")
 
-        subscription = pb.get_subscription(stripe_subscription_id)
         if subscription is not None:
-            subscription.status = data_object['status']
-            pb.update_subscription(subscription)
+            subscription['status'] = 'unpaid'
+            pb.update('subscriptions', subscription)
+    elif event_type == 'customer.subscription.updated':
+        stripe_subscription_id = data_object.stripe_id
+        subscription = pb.get_first_where('subscriptions', f"stripe_subscription_id='{stripe_subscription_id}'")
+        status = data_object['status']
 
+        if subscription is not None:
+            subscription['status'] = status
+            pb.update('subscriptions', subscription)
     elif event_type == 'customer.subscription.deleted':
         stripe_subscription_id = data_object.stripe_id
-        subscription = pb.get_subscription(stripe_subscription_id)
+        subscription = pb.get_first_where('subscriptions', f"stripe_subscription_id='{stripe_subscription_id}'")
 
+        print(subscription)
         if subscription is not None:
-            pb.delete_subscription(subscription)
+            pb.delete('subscriptions', subscription)
     else:
         print('Unhandled event type {}'.format(event_type))
 
