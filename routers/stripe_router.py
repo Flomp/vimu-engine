@@ -16,8 +16,8 @@ async def stripe_create_session(session_request: StripeSessionRequest):
 
     try:
         session = stripe.checkout.Session.create(
-            success_url='https://vimu.app/dashboard/account?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url='https://vimu.app/dashboard/account',
+            success_url='https://vimu.app/dashboard/account/subscription?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url='https://vimu.app/dashboard/account/subscription',
             customer_email=session_request.email,
             client_reference_id=session_request.user_id,
             mode='subscription',
