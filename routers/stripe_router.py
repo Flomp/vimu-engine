@@ -1,5 +1,5 @@
 import stripe
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Body
 
 from config import settings
 from models.api import APIResponse
@@ -9,11 +9,8 @@ from pocketbase.pocketbase import Pocketbase
 router = APIRouter()
 pb = Pocketbase(settings.pocketbase_url, settings.pocketbase_admin_email, settings.pocketbase_admin_password)
 
-
 @router.post("/stripe/session")
 async def stripe_create_session(session_request: StripeSessionRequest):
-    stripe.api_key = settings.stripe_api_key
-
     try:
         session = stripe.checkout.Session.create(
             success_url='https://vimu.app/dashboard/account/subscription?session_id={CHECKOUT_SESSION_ID}',
@@ -90,3 +87,13 @@ async def stripe_webhook_received(request: Request):
         print('Unhandled event type {}'.format(event_type))
 
     return APIResponse('success', {}, None)
+
+
+@router.get('/stripe/invoice')
+async def stripe_list_invoices(customer_id: str):
+    print(stripe.api_key)
+    try:
+        invoices = stripe.Invoice.list(customer=customer_id)
+        return APIResponse("success", [i.to_dict() for i in invoices.data], None)
+    except Exception as e:
+        return APIResponse("error", None, e)

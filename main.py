@@ -1,5 +1,6 @@
 import os
 
+import stripe
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,6 +10,8 @@ from engine import Engine, EngineException
 from models.api import APIResponse
 from models.engine import Data
 from routers import stripe_router, musicxml_router
+
+stripe.api_key = settings.stripe_api_key
 
 app = FastAPI()
 engine = Engine()
