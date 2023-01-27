@@ -8,7 +8,8 @@ from repositories.plot import PlotHistogramRepository, PlotBarRepository, PlotSc
 from repositories.search import SearchPartRepository, SearchLyricsRepository
 from repositories.select import SelectMeasuresRepository, SelectPartsRepository, SelectNotesRepository
 from repositories.source import SourceCorpusRepository, SourceTinynotationRepository, SourceScoreRepository
-from repositories.transform import TransformTransposeRepository, TransformChordifyRepository, TransformFlattenRepository
+from repositories.transform import TransformTransposeRepository, TransformChordifyRepository, \
+    TransformAppendRepository, TransformStackRepository
 
 
 def get_repo(node_name: str):
@@ -30,8 +31,10 @@ def get_repo(node_name: str):
         return TransformTransposeRepository()
     elif node_name == "transform_chordify":
         return TransformChordifyRepository()
-    elif node_name == "transform_flatten":
-        return TransformFlattenRepository()
+    elif node_name == "transform_append":
+        return TransformAppendRepository()
+    elif node_name == "transform_stack":
+        return TransformStackRepository()
     elif node_name == "analysis_key":
         return AnalysisKeyRepository()
     elif node_name == "analysis_ambitus":
