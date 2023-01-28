@@ -17,11 +17,7 @@ class MusicXMLEngine:
         self.tk.setOption('adjustPageHeight', 'true')
 
     def convert(self, raw: bytes):
-        possible_zip_archive = io.BytesIO(raw)
-        if zipfile.is_zipfile(possible_zip_archive):
-            z = zipfile.ZipFile(possible_zip_archive)
-            filename = next(filter(lambda f: 'META-INF' not in f, z.namelist()))
-            raw = z.read(filename)
+        raw, _ = self._unarchive(raw)
 
         file_format = self._get_file_format(raw)
         if file_format == 'musicxml':
@@ -42,12 +38,10 @@ class MusicXMLEngine:
         file_format = self._get_file_format(raw)
 
         # uncompress if necessary
-        possible_zip_archive = io.BytesIO(raw)
-        if zipfile.is_zipfile(possible_zip_archive):
+        raw, was_archive = self._unarchive(raw)
+
+        if was_archive:
             file_format = 'archive'
-            z = zipfile.ZipFile(possible_zip_archive)
-            filename = next(filter(lambda f: 'META-INF' not in f, z.namelist()))
-            raw = z.read(filename)
 
         s = converter.parse(raw)
         if s is None:
@@ -69,6 +63,15 @@ class MusicXMLEngine:
             "lyrics": music21.text.assembleLyrics(s),
             "format": file_format
         }
+
+    def _unarchive(self, raw: bytes):
+        possible_zip_archive = io.BytesIO(raw)
+        if zipfile.is_zipfile(possible_zip_archive):
+            z = zipfile.ZipFile(possible_zip_archive)
+            filename = next(filter(lambda f: 'META-INF' not in f and '.xml' in f, z.namelist()))
+            return z.read(filename), True
+        else:
+            return raw, False
 
     def _get_file_format(self, raw: bytes):
         file_format = 'unknown'
