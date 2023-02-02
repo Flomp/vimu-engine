@@ -1,72 +1,16 @@
-import pickle
-
-import numpy as np
-from music21 import analysis, corpus, stream, note, chord
 from music21.figuredBass import checker
 
 from models.engine import EngineNode, WorkerInputs, WorkerOutputs
+from repositories.AugmentedNet.inference import augmented_net
 from repositories.repository import Repository
 
 
 class DetectModulationRepository(Repository):
-    KEYS = (
-        'C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B',
-        'c', 'c#', 'd', 'eb', 'e', 'f', 'f#', 'g', 'ab', 'a', 'bb', 'b',
-    )
-
-    @staticmethod
-    def stream_2_pitch_vector(s: stream):
-        ks_analyzer = analysis.discrete.KrumhanslSchmuckler()
-        wa = analysis.windowed.WindowedAnalysis(s, ks_analyzer)
-        c = wa.getMinimumWindowStream()
-        slices = []
-        for ev in c.flat.notes:
-            if type(ev) == note.Note:
-                slices.append(ev.pitch.pitchClass)
-            elif type(ev) == chord.Chord:
-                slices.append(ev.root().pitchClass)
-            else:
-                print(ev)
-
-        return np.array(slices).reshape(1, -1), c
-
     def process(self, node: EngineNode, input_data: WorkerInputs, output_data: WorkerOutputs):
         in_0 = input_data.get('in_0')
 
         if in_0 is not None:
-            with open("bin/hmm.pickle", "rb") as file:
-                model = pickle.load(file)
-
-            v, c = self.stream_2_pitch_vector(in_0)
-            pred = model.predict(v)
-
-            idx = 0
-            if hasattr(in_0, "parts"):
-                last_part = in_0.parts[-1]
-            else:
-                last_part = in_0
-
-            last_part = last_part.flatten()
-            previous_key = ""
-            for i, m in enumerate(c.getElementsByClass('Measure')):
-                window_size = len(m.notes)
-                pred_window = pred[idx:idx + window_size]
-                if len(pred_window) == 0:
-                    continue
-                values, counts = np.unique(pred_window, return_counts=True)
-                ind = np.argmax(counts)
-                most_common_key = self.KEYS[values[ind]]
-                if previous_key != most_common_key:
-                    text = f'{previous_key}→{most_common_key}'
-                    previous_key = most_common_key
-                    el = last_part.notesAndRests.getElementsByOffset(i)
-                    try:
-                        el[0].lyric = text
-                    except:
-                        print("here")
-                        continue
-
-                idx += window_size
+            in_0 = augmented_net.predict(in_0, include_roman_numerals=False)
 
             for key in node.outputs.keys():
                 output_data[key] = in_0

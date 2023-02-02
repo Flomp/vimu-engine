@@ -7,63 +7,39 @@ from repositories.plot import PlotHistogramRepository, PlotBarRepository, PlotSc
     PlotScatterWeightedRepository, PlotBarWeightedRepository
 from repositories.search import SearchPartRepository, SearchLyricsRepository
 from repositories.select import SelectMeasuresRepository, SelectPartsRepository, SelectNotesRepository
-from repositories.source import SourceCorpusRepository, SourceTinynotationRepository, SourceScoreRepository
+from repositories.source import SourceTinynotationRepository, SourceScoreRepository
 from repositories.transform import TransformTransposeRepository, TransformChordifyRepository, \
     TransformAppendRepository, TransformStackRepository
 
+repositories = {
+    "output": OutputRepository(),
+    "source_score": SourceScoreRepository(),
+    "source_tinynotation": SourceTinynotationRepository(),
+    "select_measures": SelectMeasuresRepository(),
+    "select_parts": SelectPartsRepository(),
+    "select_notes": SelectNotesRepository(),
+    "transform_transpose": TransformTransposeRepository(),
+    "transform_chordify": TransformChordifyRepository(),
+    "transform_append": TransformAppendRepository(),
+    "transform_stack": TransformStackRepository(),
+    "analysis_key": AnalysisKeyRepository(),
+    "analysis_ambitus": AnalysisAmbitusRepository(),
+    "analysis_roman_numeral": AnalysisRomanNumeralRepository(),
+    "search_part": SearchPartRepository(),
+    "search_lyrics": SearchLyricsRepository(),
+    "figured_bass_realize": FiguredBassRealizeRepository(),
+    "detect_modulation": DetectModulationRepository(),
+    "detect_parallels": DetectParallelsRepository(),
+    "detect_voice_crossings": DetectVoiceCrossingsRepository(),
+    "plot_histogram": PlotHistogramRepository(),
+    "plot_piano_roll": PlotBarRepository(),
+    "plot_dynamics": PlotBarWeightedRepository(),
+    "plot_scatter": PlotScatterRepository(),
+    "plot_scatter_weighted": PlotScatterWeightedRepository(),
+}
 
 def get_repo(node_name: str):
-    if node_name == "output":
-        return OutputRepository()
-    elif node_name == "source_score":
-        return SourceScoreRepository()
-    elif node_name == "source_corpus":
-        return SourceCorpusRepository()
-    elif node_name == "source_tinynotation":
-        return SourceTinynotationRepository()
-    elif node_name == "select_measures":
-        return SelectMeasuresRepository()
-    elif node_name == "select_parts":
-        return SelectPartsRepository()
-    elif node_name == "select_notes":
-        return SelectNotesRepository()
-    elif node_name == "transform_transpose":
-        return TransformTransposeRepository()
-    elif node_name == "transform_chordify":
-        return TransformChordifyRepository()
-    elif node_name == "transform_append":
-        return TransformAppendRepository()
-    elif node_name == "transform_stack":
-        return TransformStackRepository()
-    elif node_name == "analysis_key":
-        return AnalysisKeyRepository()
-    elif node_name == "analysis_ambitus":
-        return AnalysisAmbitusRepository()
-    elif node_name == "analysis_roman_numeral":
-        return AnalysisRomanNumeralRepository()
-    elif node_name == "search_part":
-        return SearchPartRepository()
-    elif node_name == "search_lyrics":
-        return SearchLyricsRepository()
-    elif node_name == "figured_bass_realize":
-        return FiguredBassRealizeRepository()
-    elif node_name == "detect_modulation":
-        return DetectModulationRepository()
-    elif node_name == "detect_parallels":
-        return DetectParallelsRepository()
-    elif node_name == "detect_voice_crossings":
-        return DetectVoiceCrossingsRepository()
-    elif node_name == "plot_histogram":
-        return PlotHistogramRepository()
-    elif node_name == "plot_piano_roll":
-        return PlotBarRepository()
-    elif node_name == "plot_dynamics":
-        return PlotBarWeightedRepository()
-    elif node_name == "plot_scatter":
-        return PlotScatterRepository()
-    elif node_name == "plot_scatter_weighted":
-        return PlotScatterWeightedRepository()
-    return None
+    return repositories.get(node_name, None)
 
 
 class EngineException(Exception):
