@@ -45,7 +45,7 @@ class SourceTinynotationRepository(Repository):
 
         tinynotation = node.data.get('data')
         if tinynotation is not None:
-            tnc = tinyNotation.Converter(makeNotation=False)
+            tnc = tinyNotation.Converter()
             tnc.load(tinynotation)
             tnc.bracketStateMapping['chord'] = ChordState
             data = tnc.parse().stream

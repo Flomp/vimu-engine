@@ -10,7 +10,7 @@ class FiguredBassRealizeRepository(Repository):
         in_0 = input_data.get('in_0')
 
         if in_0 is not None:
-            s = realizer.figuredBassFromStream(in_0)
+            s = realizer.figuredBassFromStream(in_0.flat)
             fb_rules = rules.Rules()
             fb_rules.partMovementLimits = [(1, 2), (2, 5), (3, 5)]
             r = s.realize(fb_rules)
