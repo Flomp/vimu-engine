@@ -1,5 +1,5 @@
 """Turns a MusicXML file into a pandas DataFrame."""
-
+import music21.stream
 import numpy as np
 import pandas as pd
 from music21.note import Rest
@@ -24,6 +24,10 @@ S_LISTTYPE_COLUMNS = [
 
 
 def _m21Parse(s):
+    if not isinstance(s, music21.stream.Score):
+        score = music21.stream.Score()
+        score.mergeElements(s)
+        s = score
     perc = [
         p
         for p in s.parts
