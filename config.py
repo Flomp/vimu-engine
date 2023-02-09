@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     pocketbase_admin_password: str
     stripe_api_key: str
     stripe_webhook_secret: str
+    redis_url: str = None
 
     class Config:
         env_file = ".env"

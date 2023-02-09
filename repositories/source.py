@@ -1,5 +1,6 @@
 import os
 
+import music21
 import requests
 from music21 import corpus, converter, tinyNotation, chord
 
@@ -43,11 +44,19 @@ class SourceTinynotationRepository(Repository):
                 ch.duration = self.affectedTokens[0].duration
                 return ch
 
+        class KeyToken(tinyNotation.Token):
+            def parse(self, parent):
+                key_name = self.token
+                return music21.key.Key(key_name)
+
         tinynotation = node.data.get('data')
         if tinynotation is not None:
             tnc = tinyNotation.Converter()
             tnc.load(tinynotation)
             tnc.bracketStateMapping['chord'] = ChordState
+            key_mapping = (r'k(.*)', KeyToken)
+            tnc.tokenMap.append(key_mapping)
+
             data = tnc.parse().stream
             for key in node.outputs.keys():
                 output_data[key] = data

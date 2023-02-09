@@ -52,20 +52,21 @@ class EngineException(Exception):
 class Engine:
     data: Data
     forwarded = set()
-    plots = set()
+    plots = list()
 
     def process(self, data: Data):
         self.data = data
         self.forwarded.clear()
         self.plots.clear()
 
-        self.process_start_node()
-        self.process_unreachable()
-
         output_node = self.find_output_node()
 
         if output_node is None:
             raise Exception('No output node found!')
+
+        if len(output_node.inputs.get('in_0').connections) > 0:
+            self.process_start_node()
+            self.process_unreachable()
 
         return {'output': output_node.data.get('output'), 'plots': self.plots}
 
@@ -100,7 +101,7 @@ class Engine:
             node.outputData = self.process_worker(node)
 
         if 'plot' in node.outputData.keys():
-            self.plots.add(node.outputData['plot'])
+            self.plots.append(node.outputData['plot'])
 
         return node.outputData
 

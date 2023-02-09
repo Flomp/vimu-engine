@@ -6,15 +6,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
-from engine import Engine, EngineException
-from models.api import APIResponse
-from models.engine import Data
-from routers import stripe_router, musicxml_router
+from routers import stripe_router, musicxml_router, engine_router
 
 stripe.api_key = settings.stripe_api_key
 
 app = FastAPI()
-engine = Engine()
 
 origins = [settings.app_url]
 
@@ -26,18 +22,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.include_router(engine_router.router)
 app.include_router(stripe_router.router)
 app.include_router(musicxml_router.router)
-
-
-@app.post("/engine", response_model=APIResponse)
-async def root(data: Data):
-    try:
-        data = engine.process(data)
-        return APIResponse("success", data, None)
-    except EngineException as e:
-
-        return APIResponse("error", None, {"message": str(e), "node": e.node})
 
 
 if __name__ == "__main__":

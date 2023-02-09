@@ -21,9 +21,9 @@ async def musicxml_convert(file: UploadFile):
 async def musicxml_meta(file: UploadFile):
     try:
         meta = musicxml_engine.meta(file.file.read())
-    except music21.converter.ConverterException as e:
+    except (music21.converter.ConverterException, AttributeError) as e:
         raise HTTPException(status_code=400, detail="Bad request")
-    return APIResponse("success", meta, None)
+    return APIResponse(status="success", data=meta, error=None)
 
 
 @router.post("/musicxml/thumbnail")

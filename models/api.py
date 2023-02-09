@@ -1,10 +1,10 @@
 from typing import Any
 
+from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
 
-@dataclass
-class APIResponse:
+class APIResponse(BaseModel):
     status: str
     data: Any | None
     error: Any | None

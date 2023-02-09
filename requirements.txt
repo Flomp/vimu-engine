@@ -53,3 +53,4 @@ websockets==10.3
 stripe~=5.0.0
 tensorflow~=2.11.0
 pandas~=1.5.3
+aioredis~=2.0.1

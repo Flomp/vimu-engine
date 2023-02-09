@@ -24,9 +24,9 @@ async def stripe_create_session(session_request: StripeSessionRequest):
             }],
         )
     except Exception as e:
-        return APIResponse("error", None, str(e))
+        return APIResponse(status="error", data=None, error=str(e))
 
-    return APIResponse("success", session.url, None)
+    return APIResponse(status="success", data=session.url, error=None)
 
 
 @router.post('/stripe/webhook')
@@ -86,7 +86,7 @@ async def stripe_webhook_received(request: Request):
     else:
         print('Unhandled event type {}'.format(event_type))
 
-    return APIResponse('success', {}, None)
+    return APIResponse(status='success', data={}, error=None)
 
 
 @router.get('/stripe/invoice')
@@ -94,6 +94,6 @@ async def stripe_list_invoices(customer_id: str):
     print(stripe.api_key)
     try:
         invoices = stripe.Invoice.list(customer=customer_id)
-        return APIResponse("success", [i.to_dict() for i in invoices.data], None)
+        return APIResponse(status="success", data=[i.to_dict() for i in invoices.data], error=None)
     except Exception as e:
-        return APIResponse("error", None, e)
+        return APIResponse(status="error", data=None, error=e)
