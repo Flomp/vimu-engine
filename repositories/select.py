@@ -40,6 +40,6 @@ class SelectNotesRepository(Repository):
 
         if in_0 is not None and notes is not None:
             output = stream.Stream()
-            output.append(in_0.flat.notes[notes[0]:notes[1]])
+            output.append(in_0.flat.notes[int(notes[0]):int(notes[1])])
             for key in node.outputs.keys():
                 output_data[key] = output

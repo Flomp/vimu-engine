@@ -1,3 +1,4 @@
+import music21.key
 from music21 import stream, roman, interval, note
 
 from models.engine import EngineNode, WorkerInputs, WorkerOutputs
@@ -11,7 +12,9 @@ class AnalysisKeyRepository(Repository):
         in_0: stream = input_data.get('in_0')
 
         if in_0 is not None:
-            output = in_0.analyze('key')
+            in_key: music21.key.Key = in_0.analyze('key')
+            output = music21.musicxml.m21ToXml.GeneralObjectExporter().fromScale(in_key)
+
             for key in node.outputs.keys():
                 output_data[key] = output
 

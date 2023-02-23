@@ -19,11 +19,19 @@ class DetectModulationRepository(Repository):
 class DetectParallelsRepository(Repository):
     def process(self, node: EngineNode, input_data: WorkerInputs, output_data: WorkerOutputs):
         in_0 = input_data.get('in_0')
-        color = node.data.get('color')
+        open_color = node.data.get('open_color')
+        hidden_color = node.data.get('hidden_color')
+
+        open = node.data.get('open', False)
+        hidden = node.data.get('hidden', False)
 
         if in_0 is not None:
-            checker.checkConsecutivePossibilities(in_0, checker.parallelFifths, color=color)
-            checker.checkConsecutivePossibilities(in_0, checker.parallelOctaves, color=color)
+            if open:
+                checker.checkConsecutivePossibilities(in_0, checker.parallelFifths, color=open_color)
+                checker.checkConsecutivePossibilities(in_0, checker.parallelOctaves, color=open_color)
+            if hidden:
+                checker.checkConsecutivePossibilities(in_0, checker.hiddenFifth, color=hidden_color)
+                checker.checkConsecutivePossibilities(in_0, checker.hiddenOctave, color=hidden_color)
 
         for key in node.outputs.keys():
             output_data[key] = in_0
