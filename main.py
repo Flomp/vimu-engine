@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
-from routers import stripe_router, musicxml_router, engine_router
+from routers import musicxml_router, engine_router
 
 stripe.api_key = settings.stripe_api_key
 
@@ -23,7 +23,6 @@ app.add_middleware(
 )
 
 app.include_router(engine_router.router)
-app.include_router(stripe_router.router)
 app.include_router(musicxml_router.router)
 
 
