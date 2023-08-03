@@ -6,6 +6,7 @@ WORKDIR /usr/src/vimu-engine
 COPY . /usr/src/vimu-engine
 
 RUN pip install --no-cache-dir --upgrade -r /usr/src/vimu-engine/requirements.txt
+RUN groupadd -r vimu && useradd -r -g vimu vimu
 
 USER vimu
 EXPOSE 5000
