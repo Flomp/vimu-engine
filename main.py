@@ -1,14 +1,11 @@
 import os
 
-import stripe
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
 from routers import musicxml_router, engine_router
-
-stripe.api_key = settings.stripe_api_key
 
 app = FastAPI()
 
