@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
-from routers import musicxml_router, engine_router
+from routers import musicxml_router, engine_router, plugin_router
 
 app = FastAPI()
 
@@ -21,6 +21,7 @@ app.add_middleware(
 
 app.include_router(engine_router.router)
 app.include_router(musicxml_router.router)
+app.include_router(plugin_router.router)
 
 
 if __name__ == "__main__":
