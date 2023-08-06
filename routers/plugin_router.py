@@ -1,39 +1,58 @@
 import random
 import traceback
+from datetime import datetime
 
+import music21.stream.base
 from fastapi import APIRouter
+from music21 import corpus
 
 from models.api import APIResponse
-from models.plugin import Plugin, SocketType
+from models.plugin import SocketType, TestPluginRequest
 
 router = APIRouter()
 
 
 @router.post('/plugin/test')
-def test_plugin(plugin: Plugin):
+def test_plugin(plugin_request: TestPluginRequest):
     loc = {}
     input_data = {}
     output_data = {}
-    logs = "Generating input data...\n"
-    for i in plugin.config.inputs:
+    logs = []
+    append_log(logs, "Generating input data...")
+    for i in plugin_request.plugin.config.inputs:
         if i.type == SocketType.number:
             input_data[i.key] = random.randint(1, 100)
-    logs += "====== Success ✓ ======\n"
+        elif i.type == SocketType.stream:
+            input_data[i.key] = corpus.parse('bwv66.6')
+    append_log(logs, "====== Success ✓ ======")
+
     try:
-        logs += "Executing code...\n"
-        exec(plugin.code, {'input_data': input_data, 'output_data': output_data}, loc)
-        logs += "====== Success ✓ ======\n"
-        logs += "Validating outputs...\n"
-        for o in plugin.config.outputs:
+        append_log(logs, "Executing code...")
+        exec(plugin_request.plugin.code,
+             {'input_data': input_data, 'node': plugin_request.node, 'output_data': output_data}, loc)
+        append_log(logs, "====== Success ✓ ======")
+        append_log(logs, "Validating outputs...")
+        for o in plugin_request.plugin.config.outputs:
             if o.type == SocketType.number:
                 assert isinstance(output_data[o.key], int), f"{o.key} must be of type int"
-        logs += "====== Success ✓ ======\n"
+            elif o.type == SocketType.stream:
+                assert isinstance(output_data[o.key],
+                                  music21.stream.base.Stream), f"{o.key} must be of type music21.stream.Ïbase.Stream"
+        append_log(logs, "====== Success ✓ ======")
     except Exception as e:
-        logs += "====== Failure X ======\n"
-        logs += f"______ {type(e).__name__} ______\n"
-        logs += traceback.format_exc()
+        append_log(logs, "====== Failure X ======", "error")
+        append_log(logs, f"______ {type(e).__name__} ______", "error")
+        append_log(logs, traceback.format_exc(), "error")
 
-        return APIResponse(status="error", data={"input": input_data, "output": output_data, "logs": logs},
+        return APIResponse(status="error", data={"logs": logs},
                            error=str(e))
-    logs += "====== All tests passed ======"
-    return APIResponse(status="success", data={"input": input_data, "output": output_data, "logs": logs}, error=None)
+    append_log(logs, "====== All tests passed ======", "success")
+    return APIResponse(status="success", data={"logs": logs}, error=None)
+
+
+def append_log(logs, text, level="info"):
+    logs.append({
+        "date": datetime.now(),
+        "level": level,
+        "text": text
+    })
