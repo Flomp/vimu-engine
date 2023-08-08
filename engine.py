@@ -5,6 +5,7 @@ from repositories.figured_bass import FiguredBassRealizeRepository
 from repositories.output import OutputRepository
 from repositories.plot import PlotHistogramRepository, PlotBarRepository, PlotScatterRepository, \
     PlotScatterWeightedRepository, PlotBarWeightedRepository
+from repositories.plugin import PluginRepository
 from repositories.search import SearchPartRepository, SearchLyricsRepository
 from repositories.select import SelectMeasuresRepository, SelectPartsRepository, SelectNotesRepository
 from repositories.source import SourceTinynotationRepository, SourceScoreRepository
@@ -39,7 +40,7 @@ repositories = {
 }
 
 def get_repo(node_name: str):
-    return repositories.get(node_name, None)
+    return repositories.get(node_name, PluginRepository())
 
 
 class EngineException(Exception):

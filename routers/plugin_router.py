@@ -34,10 +34,10 @@ def test_plugin(plugin_request: TestPluginRequest):
         append_log(logs, "Validating outputs...")
         for o in plugin_request.plugin.config.outputs:
             if o.type == SocketType.number:
-                assert isinstance(output_data[o.key], int), f"{o.key} must be of type int"
+                assert type(output_data[o.key]) is int, f"{o.key} must be of type int"
             elif o.type == SocketType.stream:
                 assert isinstance(output_data[o.key],
-                                  music21.stream.base.Stream), f"{o.key} must be of type music21.stream.Ïbase.Stream"
+                                  music21.stream.base.Stream), f"{o.key} must be of type music21.stream.base.Stream"
         append_log(logs, "====== Success ✓ ======")
     except Exception as e:
         append_log(logs, "====== Failure X ======", "error")
