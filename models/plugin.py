@@ -7,11 +7,17 @@ from models.engine import EngineNode
 
 
 class SocketType(str, Enum):
+    int = "int"
+    float = "float"
+    string = "string"
+    bool = "bool"
+    list = "list"
+    set = "set"
+    dict = "dict"
     stream = "stream"
     part = "part"
     object = "object"
     score = "score"
-    number = "number"
 
 
 class PluginSocket(BaseModel):
