@@ -12,7 +12,8 @@ from models.api import APIResponse
 from models.plugin import SocketType, TestPluginRequest, PluginSocket
 
 router = APIRouter()
-
+from io import StringIO
+from contextlib import redirect_stdout
 
 @router.post('/plugin/test')
 async def test_plugin(plugin_request: TestPluginRequest):
@@ -39,8 +40,15 @@ def run_plugin_test(plugin_request: TestPluginRequest, logs: list):
 
     try:
         append_log(logs, "Executing code...")
-        exec(plugin_request.plugin.code,
-             {'input_data': input_data, 'node': plugin_request.node, 'output_data': output_data}, loc)
+        f = StringIO()
+        with redirect_stdout(f):
+            exec(plugin_request.plugin.code,
+                 {'input_data': input_data, 'node': plugin_request.node, 'output_data': output_data}, loc)
+
+        code_logs = f.getvalue().split('\n')[:-1]
+        for log in code_logs:
+            append_log(logs, log)
+
         append_log(logs, "====== Success ✓ ======")
         append_log(logs, "Validating outputs...")
         for o in plugin_request.plugin.config.outputs:
