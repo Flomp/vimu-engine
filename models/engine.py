@@ -5,7 +5,6 @@ from typing import Dict, Any, List, Annotated
 @dataclass
 class ConnectionData:
     node: int
-    data: Any
 
 
 @dataclass
@@ -29,7 +28,7 @@ class OutputsData:
 
 
 @dataclass
-class WorkerInputs(Dict[str, list]):
+class WorkerInputs(Dict[str, Any]):
     pass
 
 

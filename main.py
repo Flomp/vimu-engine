@@ -21,8 +21,8 @@ app.add_middleware(
 
 app.include_router(engine_router.router)
 app.include_router(musicxml_router.router)
-app.include_router(plugin_router.router)
-
+if settings.allow_plugins:
+    app.include_router(plugin_router.router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=os.getenv("PORT", default=5000), log_level="info")

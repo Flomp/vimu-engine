@@ -1,3 +1,4 @@
+from config import settings
 from models.engine import Data, EngineNode, InputConnectionData, WorkerOutputs, WorkerInputs
 from repositories.analysis import AnalysisKeyRepository, AnalysisRomanNumeralRepository, AnalysisAmbitusRepository
 from repositories.detect import DetectModulationRepository, DetectParallelsRepository, DetectVoiceCrossingsRepository
@@ -39,8 +40,11 @@ repositories = {
     "plot_scatter_weighted": PlotScatterWeightedRepository(),
 }
 
+pluginRepository = PluginRepository()
+
 def get_repo(node_name: str):
-    return repositories.get(node_name, PluginRepository())
+    default = pluginRepository if settings.allow_plugins else None
+    return repositories.get(node_name, default)
 
 
 class EngineException(Exception):

@@ -4,6 +4,7 @@ import music21
 import requests
 from music21 import corpus, converter, tinyNotation, chord
 
+from config import settings
 from models.engine import EngineNode, WorkerInputs, WorkerOutputs
 from repositories.repository import Repository
 
@@ -21,7 +22,7 @@ class SourceScoreRepository(Repository):
     def process(self, node: EngineNode, input_data: WorkerInputs, output_data: WorkerOutputs):
         score = node.data.get('data')
         if score is not None:
-            POCKETBASE_URL = os.getenv("POCKETBASE_URL", "https://pb.vimu.app")
+            POCKETBASE_URL = settings.pocketbase_url
             url = f'{POCKETBASE_URL}/api/files/scores/{score.get("id")}/{score.get("data")}'
             response = requests.get(url)
             if response.ok:

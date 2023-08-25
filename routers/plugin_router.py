@@ -92,31 +92,31 @@ def generate_input(i: PluginSocket, input_data: dict):
 def validate_output(o: PluginSocket, output_data: dict):
     assert o.key in output_data, f"{o.key} not found in output_data"
     if o.type == SocketType.int:
-        assert type(output_data[o.key]) is int, f"{o.key} must be of type int"
+        assert type(output_data[o.key]) is int, f"{o.key} must be of type int, is type {type(output_data[o.key])}"
     elif o.type == SocketType.float:
-        assert type(output_data[o.key]) is float, f"{o.key} must be of type float"
+        assert type(output_data[o.key]) is float, f"{o.key} must be of type float, is type {type(output_data[o.key])}"
     elif o.type == SocketType.string:
-        assert type(output_data[o.key]) is str, f"{o.key} must be of type str"
+        assert type(output_data[o.key]) is str, f"{o.key} must be of type str, is type {type(output_data[o.key])}"
     elif o.type == SocketType.bool:
-        assert type(output_data[o.key]) is bool, f"{o.key} must be of type bool"
+        assert type(output_data[o.key]) is bool, f"{o.key} must be of type bool, is type {type(output_data[o.key])}"
     elif o.type == SocketType.list:
-        assert type(output_data[o.key]) is list, f"{o.key} must be of type list"
+        assert type(output_data[o.key]) is list, f"{o.key} must be of type list, is type {type(output_data[o.key])}"
     elif o.type == SocketType.set:
-        assert type(output_data[o.key]) is set, f"{o.key} must be of type set"
+        assert type(output_data[o.key]) is set, f"{o.key} must be of type set, is type {type(output_data[o.key])}"
     elif o.type == SocketType.dict:
-        assert type(output_data[o.key]) is dict, f"{o.key} must be of type dict"
+        assert type(output_data[o.key]) is dict, f"{o.key} must be of type dict, is type {type(output_data[o.key])}"
     elif o.type == SocketType.stream:
         assert isinstance(output_data[o.key],
-                          music21.stream.base.Stream), f"{o.key} must be of type music21.stream.base.Stream"
+                          music21.stream.base.Stream), f"{o.key} must be of type music21.stream.base.Stream, is type {type(output_data[o.key])}"
     elif o.type == SocketType.score:
         assert isinstance(output_data[o.key],
-                          music21.stream.Score), f"{o.key} must be of type music21.stream.Score"
+                          music21.stream.Score), f"{o.key} must be of type music21.stream.Score, is type {type(output_data[o.key])}"
     elif o.type == SocketType.part:
         assert isinstance(output_data[o.key],
-                          music21.stream.Part), f"{o.key} must be of type music21.stream.Part"
+                          music21.stream.Part), f"{o.key} must be of type music21.stream.Part, is type {type(output_data[o.key])}"
     elif o.type == SocketType.object:
         assert isinstance(output_data[o.key],
-                          music21.base.Music21Object), f"{o.key} must be of type music21.base.Music21Object"
+                          music21.base.Music21Object), f"{o.key} must be of type music21.base.Music21Object, is type {type(output_data[o.key])}"
 
 
 def append_log(logs, text, level="info"):
